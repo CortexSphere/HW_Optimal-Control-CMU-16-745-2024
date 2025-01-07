@@ -145,40 +145,6 @@ def brick_simulation_qp(q, v, mass=1.0, delta_t=0.01):
     return Q, q_vec, G, h
 
 
-def augmented_lagrangian_qp(Q, q_vec, G, h, max_iter=100, tol=1e-6, rho=1.0):
-    n = len(q_vec)
-    m = len(h)
-    # Initialize variables
-    v = np.zeros(n)  # primal variable
-    lambda_ = np.zeros(m)  # dual variable (Lagrange multipliers)
-
-    for it in range(max_iter):
-        # Solve the primal problem (minimize augmented Lagrangian)
-        def lagrangian(v):
-            penalty = 0.5 * rho * np.linalg.norm(np.maximum(0, G @ v - h))**2
-            dual = lambda_ @ (G @ v - h)
-            return 0.5 * v.T @ Q @ v + q_vec @ v + dual + penalty
-
-        # Gradient of the Lagrangian
-        def grad_lagrangian(v):
-            return Q @ v + q_vec + (lambda_+rho*( G.dot(v)-h )) * G.T
-
-        # Simple gradient descent
-        for _ in range(100):
-            grad = grad_lagrangian(v)
-            step_size = 1e-3  # Small step size for stability
-            v = v - step_size * grad
-
-        # Update Lagrange multipliers
-        residual = G @ v - h
-        lambda_ = np.maximum(0, lambda_ + rho * residual)
-
-        # Check convergence
-        if np.linalg.norm(residual) < tol and np.linalg.norm(grad) < tol:
-            break
-
-    return v, lambda_
-
 
 def simulate_brick_with_visualization():
     """
