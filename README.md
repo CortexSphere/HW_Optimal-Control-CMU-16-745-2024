@@ -3,7 +3,7 @@
 [![GitHub last commit](https://img.shields.io/github/last-commit/CortexSphere/HW_Optimal-Control-CMU-16-745-2024)](https://github.com/CortexSphere/HW_Optimal-Control-CMU-16-745-2024/commits/main)
 [![GitHub repo size](https://img.shields.io/github/repo-size/CortexSphere/HW_Optimal-Control-CMU-16-745-2024)](https://github.com/CortexSphere/HW_Optimal-Control-CMU-16-745-2024)
 
-This repository contains homework and assignments for the **Optimal Control** course (CMU 16-745, Spring 2024). It focuses on numerical methods, system modeling, and optimal control strategies.
+This repository contains Python implementations of some assignments and in-class code for the Optimal Control course (CMU 16-745, Spring 2024). The in-class code was originally written in Julia. The repository focuses on numerical methods, system modeling, and optimal control strategies.
 
 ---
 
