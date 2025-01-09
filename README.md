@@ -11,11 +11,6 @@ This repository contains homework and assignments for the **Optimal Control** co
 
 - [Introduction](#introduction)
 - [Project Structure](#project-structure)
-- [Setup Instructions](#setup-instructions)
-- [Usage Guide](#usage-guide)
-- [Contributing](#contributing)
-- [License](#license)
-
 ---
 
 ## Introduction
