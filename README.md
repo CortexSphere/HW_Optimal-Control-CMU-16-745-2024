@@ -10,20 +10,20 @@ This repository contains homework and assignments for the **Optimal Control** co
 ## 📚 Table of Contents
 
 - [Introduction](#introduction)
-- [File Directory](#File Directory)
+- [Including](#Including)
 ---
 
 ## Introduction
 
 This repository includes various homework problems and projects related to **optimal control**. It covers topics such as:
-- Numerical optimization
-- Model predictive control (MPC)
 - Quadratic programming (QP)
-- Control of dynamic systems (e.g., drones and falling bricks)
+- Liner Quadratic Regulator (LQR)
+- Model predictive control (MPC)
+- Control of dynamic systems
 
 ---
 
-## File Directory
+## Including
 
 ## 1. Falling Brick
 This module implements a simulation of a falling brick sliding on ice. The problem is formulated as a Quadratic Programming (QP) problem with equality and inequality constraints. 
