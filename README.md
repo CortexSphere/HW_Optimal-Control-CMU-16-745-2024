@@ -23,7 +23,7 @@ This repository includes various homework problems and projects related to **opt
 
 ---
 
-## 📂 File Directory
+## File Directory
 
 ## 1. Falling Brick
 This module implements a simulation of a falling brick sliding on ice. The problem is formulated as a Quadratic Programming (QP) problem with equality and inequality constraints. 
