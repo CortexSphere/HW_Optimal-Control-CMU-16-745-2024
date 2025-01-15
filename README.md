@@ -24,7 +24,12 @@ This repository includes various homework problems and projects related to **opt
 ---
 
 ## Problem
-
+##  0.Constrained Newton Method
+- **Core Topics**: Full Newton Method, Gauss-Newton Method
+- **Key Highlights**:
+  - Implements Newton's method to solve constrained optimization problems, incorporating backtracking line search and regularization techniques.
+- **Path**: `Newton_method/`
+  - `constrained_min.py`: Main script to solve the constrained optimization problem.
 ## 1. Falling Brick
 This module implements a simulation of a falling brick sliding on ice. The problem is formulated as a Quadratic Programming (QP) problem with equality and inequality constraints. 
 
@@ -35,7 +40,7 @@ This module implements a simulation of a falling brick sliding on ice. The probl
   - Includes visualization of the brick's trajectory over time.
 - **Path**: `falling_brick/`
   - `falling_brick_simulation.py`: Main script to simulate the falling brick and solve the QP problem.
-
+![falling_brick](falling_brick/brick_simulation.gif)
 ---
 
 ## 2. 2D Drone
@@ -49,3 +54,7 @@ This module focuses on controlling a planar quadrotor to move towards a fixed po
   - Includes animated visualizations of the quadrotor's trajectory.
 - **Path**: `2D_drone/`
   - `quadrotor_simulation.py`: Main script to simulate quadrotor control using MPC and LQR.
+# LQR
+![2D_drone_LQR](2D_drone/quadrotor_lqr.gif)
+# MPC
+![2D_drone_MPC](2D_drone/quadrotor_mpc.gif)

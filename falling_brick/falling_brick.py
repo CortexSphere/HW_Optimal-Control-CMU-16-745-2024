@@ -175,7 +175,7 @@ def simulate_brick_with_visualization():
         vs[k + 1], _, _ = solve_qp(qp, verbose=True, tol=1e-8)
         qs[k + 1] = qs[k] + dt * vs[k + 1]
 
-    # Extract x and y coordinates as sequences
+    # Extract x_sys and y coordinates as sequences
     xs = qs[:, 0]
     ys = qs[:, 1]
 
@@ -183,7 +183,7 @@ def simulate_brick_with_visualization():
     fig, ax = plt.subplots(figsize=(10, 6))
     ax.set_xlim(0, max(xs) + 1)
     ax.set_ylim(min(ys) - 1, max(ys) + 1)
-    ax.set_xlabel("x (m)")
+    ax.set_xlabel("x_sys (m)")
     ax.set_ylabel("y (m)")
     ax.set_title("Brick Falling and Sliding on Ice")
     ax.axhline(y=0, color="r", linestyle="--", label="Ground level")
@@ -202,7 +202,7 @@ def simulate_brick_with_visualization():
 
     # Update the animation
     def update(frame):
-        brick.set_data([xs[frame]], [ys[frame]])  # Pass as sequences ([x], [y])
+        brick.set_data([xs[frame]], [ys[frame]])  # Pass as sequences ([x_sys], [y])
         trajectory.set_data(xs[:frame + 1], ys[:frame + 1])  # Update trajectory
         return brick, trajectory
 

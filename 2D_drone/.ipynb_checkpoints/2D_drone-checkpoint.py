@@ -25,8 +25,8 @@ def quad_dynamics(x, u):
     Compute the state derivatives for the planar quadrotor.
 
     Parameters:
-    x : ndarray
-        State vector [x, y, theta, x_dot, y_dot, theta_dot].
+    x_sys : ndarray
+        State vector [x_sys, y, theta, x_dot, y_dot, theta_dot].
     u : ndarray
         Control inputs [u1, u2].
 
@@ -54,7 +54,7 @@ def quad_dynamics_rk4(x, u, h=h):
     Perform Runge-Kutta 4 integration for the quadrotor dynamics.
 
     Parameters:
-    x : ndarray
+    x_sys : ndarray
         Current state vector.
     u : ndarray
         Control input.
@@ -81,7 +81,7 @@ def numerical_jacobian(func, x, epsilon=1e-6):
     Parameters:
     func : callable
         Function for which to compute the Jacobian.
-    x : ndarray
+    x_sys : ndarray
         Point at which to compute the Jacobian.
     epsilon : float
         Perturbation size.
@@ -170,7 +170,7 @@ def lqr_controller(t, x, K=K, xref=np.zeros(Nx)):
     Parameters:
     t : float
         Current time (unused).
-    x : ndarray
+    x_sys : ndarray
         Current state.
     K : ndarray
         LQR gain matrix.
@@ -238,7 +238,7 @@ def mpc_controller(t, x, K=K, xref=np.zeros(Nx)):
     Parameters:
     t : float
         Current time.
-    x : ndarray
+    x_sys : ndarray
         Current state.
     K : ndarray
         LQR gain matrix.
@@ -264,7 +264,7 @@ def mpc_controller(t, x, K=K, xref=np.zeros(Nx)):
         return u_hover  # Fallback to hover
 
     # Extract the first control input
-    delta_u = results.x[:Nu]
+    delta_u = results.x_sys[:Nu]
 
     return u_hover + delta_u
 
@@ -322,7 +322,7 @@ plt.figure(figsize=(12, 8))
 
 # Plot states for LQR
 plt.subplot(2, 2, 1)
-plt.plot(time, xhist1[0, :], label='x')
+plt.plot(time, xhist1[0, :], label='x_sys')
 plt.plot(time, xhist1[1, :], label='y')
 plt.plot(time, xhist1[2, :], label='theta')
 plt.title('LQR Controller States')
@@ -343,7 +343,7 @@ plt.grid(True)
 
 # Plot states for MPC
 plt.subplot(2, 2, 3)
-plt.plot(time, xhist2[0, :], label='x')
+plt.plot(time, xhist2[0, :], label='x_sys')
 plt.plot(time, xhist2[1, :], label='y')
 plt.plot(time, xhist2[2, :], label='theta')
 plt.title('MPC Controller States')
@@ -377,7 +377,7 @@ def animate_quadrator(xhist, controller_type="Controller"):
     controller_type : str
         Type of controller (for title purposes).
     """
-    # Extract x and y positions
+    # Extract x_sys and y positions
     xs = xhist[0, :]
     ys = xhist[1, :]
     thetas = xhist[2, :]
@@ -391,7 +391,7 @@ def animate_quadrator(xhist, controller_type="Controller"):
     fig, ax = plt.subplots(figsize=(8, 6))
     ax.set_xlim(x_min, x_max)
     ax.set_ylim(y_min, y_max)
-    ax.set_xlabel("x (m)")
+    ax.set_xlabel("x_sys (m)")
     ax.set_ylabel("y (m)")
     ax.set_title(f"Quadrotor Movement using {controller_type}")
     ax.axhline(y=0, color="r", linestyle="--", label="Ground level")
