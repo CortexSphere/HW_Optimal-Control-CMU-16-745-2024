@@ -83,7 +83,7 @@ This module demonstrates the Direct Collocation method to solve the cart-pole sw
   - Formulates the cart-pole dynamics using symbolic computation in CasADi.
   - Implements Hermite-Simpson constraints for trajectory optimization.
   - Visualizes state and control trajectories and provides an animated simulation.
-- **Path**: `Cart-Pole-swingup//`
+- **Path**: `Cart-Pole-swingup/`
   - `DIRCOL.py`: Main script to solve the cart-pole swing-up problem.
 
 ### Visualization
