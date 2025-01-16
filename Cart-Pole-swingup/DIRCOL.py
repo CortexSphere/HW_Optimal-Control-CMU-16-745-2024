@@ -30,7 +30,7 @@ def dynamic_function(params, x, u):
     # 定义科氏力矩阵 C
     C = ca.vertcat(
         ca.horzcat(0, -mp * theta_dot * l * s),
-        ca.MX.zeros((1, 2))  # 使用 MX 而非 DM
+        ca.MX.zeros((1, 2))
     )
 
     # 定义重力向量 G
@@ -181,147 +181,152 @@ class DIRCOL:
         except RuntimeError as e:
             print("优化求解失败:", e)
             return None, None
-
-
-# 系统参数
-params = {
-    'mc': 1.0,  # 小车质量
-    'mp': 0.2,  # 摆杆质量
-    'l': 0.5  # 摆杆长度
-}
-
 # 状态和控制维度
 Nx = 4
 Nu = 1
-
-# 权重矩阵
-Q = ca.DM.eye(4) * 1
-R = ca.DM.eye(1) * 0.1
-Qf = ca.DM.eye(4) * 10
-
-# 控制输入边界
-lower_upper_bound_ux = {'lb_u': -10, 'ub_u': 10}
-
-# 初始状态和目标状态
-x_start = ca.MX.zeros(Nx)  # 修正维度，使用 MX
-x_end = ca.vertcat(
-    0,  # p
-    ca.pi,  # theta (倒立位置)
-    0,  # p_dot
-    0  # theta_dot
-)
-
-# 时间设置
 dt = 0.05
-tf = 2.0
-Nt = int(tf / dt)
-t_vec = np.linspace(0, tf, Nt + 1)
+def trajectory_generate():
+    # 系统参数
+    params = {
+        'mc': 1.0,  # 小车质量
+        'mp': 0.2,  # 摆杆质量
+        'l': 0.5  # 摆杆长度
+    }
 
-# 初始化优化器
-solver = DIRCOL(
-    params=params,
-    Q=Q,
-    R=R,
-    Qf=Qf,
-    lower_upper_bound_ux=lower_upper_bound_ux,
-    x_start=x_start,
-    x_end=x_end,
-    Nx=Nx,
-    Nu=Nu,
-    Nt=Nt,
-    dt=dt
-)
-x_initial=0.001*np.random.rand(Nx,Nt+1)
-u_initial=0.001*np.random.rand(Nu,Nt+1)
-xks,uks=solver.solve(x_initial=x_initial,u_initial=u_initial)
+    # 权重矩阵
+    Q = ca.DM.eye(4) * 1
+    R = ca.DM.eye(1) * 0.1
+    Qf = ca.DM.eye(4) * 10
 
-# 绘制结果
-if xks is not None and uks is not None:
-    plt.figure(figsize=(12, 6))
-    labels = ["p", "theta", "p_dot", "theta_dot"]
-    for i in range(Nx):
-        plt.plot(t_vec, xks[i, :], label=labels[i])
-    plt.legend()
-    plt.xlabel("Time (s)")
-    plt.ylabel("State")
-    plt.title("State Trajectory")
-    plt.grid(True)
-    plt.savefig("state.png")
-    plt.show()
+    # 控制输入边界
+    lower_upper_bound_ux = {'lb_u': -10, 'ub_u': 10}
 
-    plt.figure(figsize=(12, 4))
-    plt.plot(t_vec, uks, label="u")
-    plt.legend()
-    plt.xlabel("Time (s)")
-    plt.ylabel("Control")
-    plt.title("Control Trajectory")
-    plt.grid(True)
-    plt.savefig("control.png")
-    plt.show()
-else:
-    print("优化求解失败，无法绘制轨迹。")
+    # 初始状态和目标状态
+    x_start = ca.MX.zeros(Nx)  # 修正维度，使用 MX
+    x_end = ca.vertcat(
+        0,  # p
+        ca.pi,  # theta (倒立位置)
+        0,  # p_dot
+        0  # theta_dot
+    )
 
-from matplotlib.animation import FuncAnimation
-# 动画仿真参数
-l = 0.5  # 摆杆长度
-car_width = 0.2  # 小车宽度
-car_height = 0.1  # 小车高度
+    # 时间设置
+    dt = 0.05
+    tf = 2.0
+    Nt = int(tf / dt)-1
+    t_vec = np.linspace(0, tf, Nt + 1)
 
-def animate_inverted_pendulum(t_vec, xks, l):
-    """
-    基于优化结果进行动画仿真。
+    # 初始化优化器
+    solver = DIRCOL(
+        params=params,
+        Q=Q,
+        R=R,
+        Qf=Qf,
+        lower_upper_bound_ux=lower_upper_bound_ux,
+        x_start=x_start,
+        x_end=x_end,
+        Nx=Nx,
+        Nu=Nu,
+        Nt=Nt,
+        dt=dt
+    )
+    x_initial=0.001*np.random.rand(Nx,Nt+1)
+    u_initial=0.001*np.random.rand(Nu,Nt+1)
+    xks,uks=solver.solve(x_initial=x_initial,u_initial=u_initial)
+    return xks, uks,t_vec
 
-    参数：
-    - t_vec: 时间序列
-    - xks: 状态轨迹 [p, theta, p_dot, theta_dot]
-    - l: 摆杆长度
-    """
-    # 提取小车位置和摆杆角度
-    p_vals = xks[0, :]
-    theta_vals = xks[1, :]
+if __name__ == "__main__":
+    xks, uks,t_vec = trajectory_generate()
+    # 绘制结果
+    if xks is not None and uks is not None:
+        plt.figure(figsize=(12, 6))
+        labels = ["p", "theta", "p_dot", "theta_dot"]
+        for i in range(Nx):
+            plt.plot(t_vec, xks[i, :], label=labels[i])
+        plt.legend()
+        plt.xlabel("Time (s)")
+        plt.ylabel("State")
+        plt.title("State Trajectory")
+        plt.grid(True)
+        plt.savefig("state.png")
+        plt.show()
 
-    # 初始化图形
-    fig, ax = plt.subplots(figsize=(8, 4))
-    ax.set_xlim(-1.5, 1.5)
-    ax.set_ylim(-1, 1)
-    ax.set_aspect('equal')
-    ax.grid(True)
+        plt.figure(figsize=(12, 4))
+        plt.plot(t_vec, uks, label="u")
+        plt.legend()
+        plt.xlabel("Time (s)")
+        plt.ylabel("Control")
+        plt.title("Control Trajectory")
+        plt.grid(True)
+        plt.savefig("control.png")
+        plt.show()
+    else:
+        print("优化求解失败，无法绘制轨迹。")
 
-    # 绘制小车和摆杆
-    car = plt.Rectangle((-car_width / 2, -car_height / 2), car_width, car_height, color="blue")
-    pendulum_line, = ax.plot([], [], lw=2, color="darkorange")
-    ax.add_patch(car)
+    from matplotlib.animation import FuncAnimation
 
-    def init():
-        """ 初始化动画元素 """
-        car.set_xy((-car_width / 2, -car_height / 2))
-        pendulum_line.set_data([], [])
-        return car, pendulum_line
-
-    def update(frame):
-        """ 更新动画元素 """
-        p = p_vals[frame]
-        theta = theta_vals[frame]
-
-        # 更新小车位置
-        car.set_xy((p - car_width / 2, -car_height / 2))
-
-        # 更新摆杆位置
-        pendulum_x = [p, p + l * np.sin(theta)]
-        pendulum_y = [0, -l * np.cos(theta)]
-        pendulum_line.set_data(pendulum_x, pendulum_y)
-
-        return car, pendulum_line
-
-    # 创建动画
-    anim = FuncAnimation(fig, update, frames=len(t_vec), init_func=init, blit=True, interval=dt * 1000)
-    anim.save("cart-pole-swingup.gif", writer="pillow", fps=30)
-    print("the GIF graph of whole process has been saved successfully!")
+    # 动画仿真参数
+    l = 0.5  # 摆杆长度
+    car_width = 0.2  # 小车宽度
+    car_height = 0.1  # 小车高度
 
 
-# 调用动画函数
-if xks is not None:
-    animate_inverted_pendulum(t_vec, xks, l)
+    def animate_inverted_pendulum(t_vec, xks, l):
+        """
+        基于优化结果进行动画仿真。
 
-else:
-    print("没有优化结果，无法生成动画。")
+        参数：
+        - t_vec: 时间序列
+        - xks: 状态轨迹 [p, theta, p_dot, theta_dot]
+        - l: 摆杆长度
+        """
+        # 提取小车位置和摆杆角度
+        p_vals = xks[0, :]
+        theta_vals = xks[1, :]
+
+        # 初始化图形
+        fig, ax = plt.subplots(figsize=(8, 4))
+        ax.set_xlim(-1.5, 1.5)
+        ax.set_ylim(-1, 1)
+        ax.set_aspect('equal')
+        ax.grid(True)
+
+        # 绘制小车和摆杆
+        car = plt.Rectangle((-car_width / 2, -car_height / 2), car_width, car_height, color="blue")
+        pendulum_line, = ax.plot([], [], lw=2, color="darkorange")
+        ax.add_patch(car)
+
+        def init():
+            """ 初始化动画元素 """
+            car.set_xy((-car_width / 2, -car_height / 2))
+            pendulum_line.set_data([], [])
+            return car, pendulum_line
+
+        def update(frame):
+            """ 更新动画元素 """
+            p = p_vals[frame]
+            theta = theta_vals[frame]
+
+            # 更新小车位置
+            car.set_xy((p - car_width / 2, -car_height / 2))
+
+            # 更新摆杆位置
+            pendulum_x = [p, p + l * np.sin(theta)]
+            pendulum_y = [0, -l * np.cos(theta)]
+            pendulum_line.set_data(pendulum_x, pendulum_y)
+
+            return car, pendulum_line
+
+        # 创建动画
+        anim = FuncAnimation(fig, update, frames=len(t_vec), init_func=init, blit=True, interval=dt * 1000)
+        anim.save("cart-pole-swingup.gif", writer="pillow", fps=30)
+        print("the GIF graph of whole process has been saved successfully!")
+
+
+    # 调用动画函数
+    if xks is not None:
+        animate_inverted_pendulum(t_vec, xks, l)
+
+    else:
+        print("没有优化结果，无法生成动画。")
+
