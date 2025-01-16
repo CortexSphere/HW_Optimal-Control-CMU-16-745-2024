@@ -58,3 +58,28 @@ This module focuses on controlling a planar quadrotor to move towards a fixed po
 ![2D_drone_LQR](2D_drone/quadrotor_lqr.gif)
 # MPC
 ![2D_drone_MPC](2D_drone/quadrotor_mpc.gif)
+
+---
+
+## 3. Cart-Pole Swing-Up
+This module demonstrates the Direct Collocation method to solve the cart-pole swing-up problem. The goal is to swing the pendulum from a downward position to an inverted position by applying horizontal forces to the cart.
+
+- **Core Topics**: Direct Collocation, Nonlinear Programming, Hermite-Simpson Integration
+- **Key Highlights**:
+  - Formulates the cart-pole dynamics using symbolic computation in CasADi.
+  - Implements Hermite-Simpson constraints for trajectory optimization.
+  - Visualizes state and control trajectories and provides an animated simulation.
+- **Path**: `Cart-Pole-swingup//`
+  - `DIRCOL.py`: Main script to solve the cart-pole swing-up problem.
+
+### Visualization
+
+1. **State Trajectories**:
+   ![State Trajectory](Cart-Pole-swingup/state.png)
+
+2. **Control Trajectory**:
+   ![Control Trajectory](Cart-Pole-swingup/control.png)
+
+3. **Animated Simulation**:
+   ![Cart-Pole Animation](Cart-Pole-swingup/cart-pole-swingup.gif)
+
