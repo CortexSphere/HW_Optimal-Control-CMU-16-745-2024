@@ -20,8 +20,6 @@ umin = np.array([0.2 * m * g, 0.2 * m * g])
 umax = np.array([0.6 * m * g, 0.6 * m * g])
 
 h = 0.05  # time step (20 Hz)
-
-
 def quad_dynamics(x, u):
     """
     Compute the state derivatives for the planar quadrotor.
@@ -104,10 +102,6 @@ def numerical_jacobian(func, x, epsilon=1e-6):
     return jac
 
 
-# Linearized dynamics for hovering
-
-
-
 # Define functions for linearization
 def dynamics_rk4_wrapper(x):
     return quad_dynamics_rk4(x, u_hover)
@@ -156,8 +150,6 @@ def cost_function(xhist, uhist):
         cost += 0.5 * xhist[:, k].T @ Q @ xhist[:, k]
         cost += 0.5 * uhist[k].T @ R @ uhist[k]
     return cost
-
-
 # LQR Hover Controller
 # Solve Discrete Algebraic Riccati Equation
 P = solve_discrete_are(A, B, Q, R)
@@ -182,8 +174,6 @@ def lqr_controller(x, xref,K=K):
         Control input.
     """
     return u_hover - K @ (x - xref)
-
-
 # Build QP matrices for OSQP
 Nh = 20  # Horizon length (one second at 20Hz)
 
@@ -229,7 +219,7 @@ ub = np.concatenate([
 
 # Setup OSQP problem
 prob = osqp.OSQP()
-prob.setup(P=H, q=b, A=D, l=lb, u=ub, verbose=True, eps_abs=1e-8, eps_rel=1e-8, polish=True)
+prob.setup(P=H, q=b, A=D, l=lb, u=ub, verbose=False, eps_abs=1e-8, eps_rel=1e-8, polish=True)
 
 
 def mpc_controller(x, xref):
@@ -248,13 +238,16 @@ def mpc_controller(x, xref):
     u : ndarray
         Control input.
     """
-    lb[:6]=-A@x
+    lb[:6] = -A @ x
     ub[:6] = -A @ x
-    for j in range(Nh-1):
-        b[Nu+j*(Nx+Nu):Nu+j*(Nx+Nu)+Nx]=-Q@xref
-    b[Nu+(Nh-1)*(Nx+Nu):Nu+(Nh-1)*(Nx+Nu)+Nx]=-P@xref
+
+    # the linear guys in function J due to the nonzero x_ref
+    for j in range(Nh - 1):
+        b[Nu + j * (Nx + Nu):Nu + j * (Nx + Nu) + Nx] = -Q @ xref
+    b[Nu + (Nh - 1) * (Nx + Nu):Nu + (Nh - 1) * (Nx + Nu) + Nx] = -P @ xref
+
     # Update the first Nx constraints to be the current state
-    prob.update(q=b,l=lb, u=ub)
+    prob.update(q=b, l=lb, u=ub)
 
     # Update the QP's b vector based on the current state and reference
     # This is a placeholder as detailed implementation requires proper mapping
@@ -263,9 +256,8 @@ def mpc_controller(x, xref):
     # Solve QP
     results = prob.solve()
 
-
     # Extract the first control input
-    delta_u = results.x_sys[:Nu]
+    delta_u = results.x[:Nu]
 
     return u_hover + delta_u
 
@@ -308,7 +300,7 @@ def closed_loop(x0, controller, Nt, xref):
 
 # Define reference and initial states
 x_ref = np.array([0.0, 1.0, 0.0, 0.0, 0.0, 0.0])
-x0 = np.array([10.0, 2.0, 0.0, 0.0, 0.0, 0.0])
+x0 = np.array([1.0, 2.0, 0.0, 0.0, 0.0, 0.0])
 
 # Simulate closed-loop with LQR controller
 xhist1, uhist1 = closed_loop(x0, lqr_controller, Nt, x_ref)
@@ -364,7 +356,7 @@ plt.xlabel('Time [s]')
 plt.ylabel('Control Inputs')
 plt.legend()
 plt.grid(True)
-
+plt.savefig('2D_drone_.png')
 plt.tight_layout()
 plt.show()
 
@@ -445,12 +437,12 @@ def animate_quadrotor(xhist, uhist, title='Quadrotor Simulation', filename='quad
                         init_func=init, blit=True, interval=50)
 
     # 保存动画为GIF
-    ani.save(filename, writer='pillow', fps=20)
+    ani.save(filename, writer='pillow', fps=60)
     plt.close(fig)
     print(f"动画已保存为 {filename}")
 
 # 生成LQR控制器的动画
-animate_quadrotor(xhist1, uhist1, title='Quadrotor Simulation with LQR Controller', filename='quadrotor_lqr.gif')
+animate_quadrotor(xhist1, uhist1, title='Quadrotor Simulation with LQR Controller', filename='quadrotor_lqr_.gif')
 
 # 生成MPC控制器的动画
-animate_quadrotor(xhist2, uhist2, title='Quadrotor Simulation with MPC Controller', filename='quadrotor_mpc.gif')
+animate_quadrotor(xhist2, uhist2, title='Quadrotor Simulation with MPC Controller', filename='quadrotor_mpc_.gif')

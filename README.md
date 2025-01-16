@@ -54,10 +54,24 @@ This module focuses on controlling a planar quadrotor to move towards a fixed po
   - Includes animated visualizations of the quadrotor's trajectory.
 - **Path**: `2D_drone/`
   - `quadrotor_simulation.py`: Main script to simulate quadrotor control using MPC and LQR.
-# LQR
-![2D_drone_LQR](2D_drone/quadrotor_lqr.gif)
-# MPC
-![2D_drone_MPC](2D_drone/quadrotor_mpc.gif)
+
+## Initial Point Close from Target
+- **State and Control Trajectories**:
+   ![State Trajectory](2D_drone/2D_drone_.png)
+- **LQR**
+![2D_drone_LQR_far](2D_drone/quadrotor_lqr_.gif)
+
+- **MPC**
+![2D_drone_LQR_near](2D_drone/quadrotor_mpc_.gif)
+
+## Initial Point Far from Target
+- **State and Control Trajectories**:
+   ![State Trajectory](2D_drone/2D_drone.png)
+- **LQR**
+![2D_drone_MPC_far](2D_drone/quadrotor_lqr.gif)
+
+- **MPC**
+![2D_drone_MPC_near](2D_drone/quadrotor_mpc.gif)
 
 ---
 
